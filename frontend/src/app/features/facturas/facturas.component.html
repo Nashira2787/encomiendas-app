@@ -1,0 +1,81 @@
+<div class="clientes-page">
+
+  <div class="header">
+    <div>
+      <h1>Facturas</h1>
+      <p>Registro de facturación vinculada a pagos</p>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <form class="card form-card" (ngSubmit)="guardarFactura()">
+
+      <h2>Nueva factura</h2>
+
+      <label>Pago</label>
+      <select [(ngModel)]="factura.pagoId" name="pagoId" required>
+        <option value="">Seleccione pago</option>
+        <option *ngFor="let p of pagos" [value]="p.id">
+          Pago #{{ p.id }} - {{ p.monto }} Bs
+        </option>
+      </select>
+
+      <label>Número de factura</label>
+      <input type="text" [(ngModel)]="factura.numeroFactura" name="numeroFactura">
+
+      <label>NIT</label>
+      <input type="text" [(ngModel)]="factura.nit" name="nit">
+
+      <label>Razón social</label>
+      <input type="text" [(ngModel)]="factura.razonSocial" name="razonSocial">
+
+      <button type="submit">
+        Guardar factura
+      </button>
+
+    </form>
+
+    <div class="card table-card">
+
+      <h2>Listado de facturas</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Pago</th>
+            <th>Número</th>
+            <th>NIT</th>
+            <th>Razón social</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let f of facturas">
+            <td>{{ f.id }}</td>
+            <td>#{{ f.pagoId }}</td>
+            <td>{{ f.numeroFactura }}</td>
+            <td>{{ f.nit }}</td>
+            <td>{{ f.razonSocial }}</td>
+            <td>{{ f.fecha }}</td>
+            <td>
+              <button class="delete" (click)="eliminarFactura(f.id)">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p *ngIf="facturas.length === 0" class="empty">
+        No hay facturas registradas.
+      </p>
+
+    </div>
+
+  </div>
+
+</div>

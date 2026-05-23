@@ -1,0 +1,93 @@
+<div class="clientes-page">
+
+  <div class="header">
+    <div>
+      <h1>Seguimientos</h1>
+      <p>Tracking y estados de los envíos</p>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <form class="card form-card" (ngSubmit)="guardarSeguimiento()">
+
+      <h2>Nuevo seguimiento</h2>
+
+      <label>Envío</label>
+      <select [(ngModel)]="seguimiento.envioId" name="envioId" required>
+        <option value="">Seleccione envío</option>
+        <option *ngFor="let e of envios" [value]="e.id">
+          Envío #{{ e.id }}
+        </option>
+      </select>
+
+      <label>Estado</label>
+      <select [(ngModel)]="seguimiento.estadoId" name="estadoId">
+        <option [value]="1">Pendiente</option>
+        <option [value]="2">En tránsito</option>
+        <option [value]="3">Entregado</option>
+      </select>
+
+      <label>Ubicación</label>
+      <input
+        type="text"
+        [(ngModel)]="seguimiento.ubicacion"
+        name="ubicacion"
+      >
+
+      <label>Observaciones</label>
+      <input
+        type="text"
+        [(ngModel)]="seguimiento.observaciones"
+        name="observaciones"
+      >
+
+      <button type="submit">
+        Guardar seguimiento
+      </button>
+
+    </form>
+
+    <div class="card table-card">
+
+      <h2>Listado de seguimientos</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Envío</th>
+            <th>Estado</th>
+            <th>Ubicación</th>
+            <th>Observaciones</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let s of seguimientos">
+            <td>{{ s.id }}</td>
+            <td>#{{ s.envioId }}</td>
+            <td>{{ obtenerEstado(s.estadoId) }}</td>
+            <td>{{ s.ubicacion }}</td>
+            <td>{{ s.observaciones }}</td>
+            <td>{{ s.fecha }}</td>
+            <td>
+              <button class="delete" (click)="eliminarSeguimiento(s.id)">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p *ngIf="seguimientos.length === 0" class="empty">
+        No hay seguimientos registrados.
+      </p>
+
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,110 @@
+<div class="clientes-page">
+
+  <div class="header">
+    <div>
+      <h1>Sucursales</h1>
+      <p>Registro y administración de sucursales</p>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <form class="card form-card" (ngSubmit)="guardarSucursal()">
+
+      <h2>Nueva sucursal</h2>
+
+      <label>Nombre</label>
+      <input
+        type="text"
+        [(ngModel)]="sucursal.nombre"
+        name="nombre"
+        required
+      >
+
+      <label>Dirección</label>
+      <input
+        type="text"
+        [(ngModel)]="sucursal.direccion"
+        name="direccion"
+        required
+      >
+
+      <label>Ciudad</label>
+      <input
+        type="text"
+        [(ngModel)]="sucursal.ciudad"
+        name="ciudad"
+        required
+      >
+
+      <label>Teléfono</label>
+      <input
+        type="text"
+        [(ngModel)]="sucursal.telefono"
+        name="telefono"
+      >
+
+      <button type="submit">
+        Guardar sucursal
+      </button>
+
+    </form>
+
+    <div class="card table-card">
+
+      <h2>Listado de sucursales</h2>
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Dirección</th>
+            <th>Ciudad</th>
+            <th>Teléfono</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <tr *ngFor="let s of sucursales">
+
+            <td>{{ s.id }}</td>
+
+            <td>{{ s.nombre }}</td>
+
+            <td>{{ s.direccion }}</td>
+
+            <td>{{ s.ciudad }}</td>
+
+            <td>{{ s.telefono }}</td>
+
+            <td>
+              <button
+                class="delete"
+                (click)="eliminarSucursal(s.id)"
+              >
+                Eliminar
+              </button>
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+      <p
+        *ngIf="sucursales.length === 0"
+        class="empty"
+      >
+        No hay sucursales registradas.
+      </p>
+
+    </div>
+
+  </div>
+
+</div>

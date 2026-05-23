@@ -1,0 +1,81 @@
+<div class="clientes-page">
+
+  <div class="header">
+    <div>
+      <h1>Pagos</h1>
+      <p>Registro de pagos vinculados a envíos</p>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <form class="card form-card" (ngSubmit)="guardarPago()">
+
+      <h2>Nuevo pago</h2>
+
+      <label>Envío</label>
+      <select [(ngModel)]="pago.envioId" name="envioId" required>
+        <option value="">Seleccione envío</option>
+        <option *ngFor="let e of envios" [value]="e.id">
+          Envío #{{ e.id }}
+        </option>
+      </select>
+
+      <label>Monto</label>
+      <input type="number" [(ngModel)]="pago.monto" name="monto" required>
+
+      <label>Método de pago</label>
+      <select [(ngModel)]="pago.metodo" name="metodo">
+        <option value="EFECTIVO">Efectivo</option>
+        <option value="QR">QR</option>
+        <option value="TRANSFERENCIA">Transferencia</option>
+        <option value="TARJETA">Tarjeta</option>
+      </select>
+
+      <button type="submit">
+        Guardar pago
+      </button>
+
+    </form>
+
+    <div class="card table-card">
+
+      <h2>Listado de pagos</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Envío</th>
+            <th>Monto</th>
+            <th>Método</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let p of pagos">
+            <td>{{ p.id }}</td>
+            <td>#{{ p.envioId }}</td>
+            <td>{{ p.monto }}</td>
+            <td>{{ p.metodo }}</td>
+            <td>{{ p.fecha }}</td>
+            <td>
+              <button class="delete" (click)="eliminarPago(p.id)">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p *ngIf="pagos.length === 0" class="empty">
+        No hay pagos registrados.
+      </p>
+
+    </div>
+
+  </div>
+
+</div>

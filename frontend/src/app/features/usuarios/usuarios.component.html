@@ -1,0 +1,79 @@
+<div class="clientes-page">
+
+  <div class="header">
+    <div>
+      <h1>Usuarios</h1>
+      <p>Administración de usuarios del sistema</p>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <form class="card form-card" (ngSubmit)="guardarUsuario()">
+
+      <h2>Nuevo usuario</h2>
+
+      <label>Nombre de usuario</label>
+      <input type="text" [(ngModel)]="usuario.nombreUsuario" name="nombreUsuario" required>
+
+      <label>Contraseña</label>
+      <input type="password" [(ngModel)]="usuario.password" name="password" required>
+
+      <label>Rol</label>
+      <select [(ngModel)]="usuario.rol" name="rol">
+        <option value="ADMIN">Administrador</option>
+        <option value="USUARIO">Usuario</option>
+        <option value="OPERADOR">Operador</option>
+      </select>
+
+      <label>Estado</label>
+      <select [(ngModel)]="usuario.estado" name="estado">
+        <option [ngValue]="true">Activo</option>
+        <option [ngValue]="false">Inactivo</option>
+      </select>
+
+      <button type="submit">
+        Guardar usuario
+      </button>
+
+    </form>
+
+    <div class="card table-card">
+
+      <h2>Listado de usuarios</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Usuario</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let u of usuarios">
+            <td>{{ u.id }}</td>
+            <td>{{ u.nombreUsuario }}</td>
+            <td>{{ u.rol }}</td>
+            <td>{{ u.estado ? 'Activo' : 'Inactivo' }}</td>
+            <td>
+              <button class="delete" (click)="eliminarUsuario(u.id)">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p *ngIf="usuarios.length === 0" class="empty">
+        No hay usuarios registrados.
+      </p>
+
+    </div>
+
+  </div>
+
+</div>

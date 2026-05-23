@@ -1,0 +1,93 @@
+<div class="clientes-page">
+
+  <div class="header">
+    <div>
+      <h1>Encomiendas</h1>
+      <p>Registro de encomiendas relacionadas con clientes</p>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <form class="card form-card" (ngSubmit)="guardarEncomienda()">
+
+      <h2>Nueva encomienda</h2>
+
+      <label>Código</label>
+      <input type="text" [(ngModel)]="encomienda.codigo" name="codigo" required>
+
+      <label>Remitente</label>
+      <select [(ngModel)]="encomienda.remitenteId" name="remitenteId" required>
+        <option value="">Seleccione remitente</option>
+        <option *ngFor="let c of clientes" [value]="c.id">
+          {{ c.nombre }} {{ c.apellido }}
+        </option>
+      </select>
+
+      <label>Destinatario</label>
+      <select [(ngModel)]="encomienda.destinatarioId" name="destinatarioId" required>
+        <option value="">Seleccione destinatario</option>
+        <option *ngFor="let c of clientes" [value]="c.id">
+          {{ c.nombre }} {{ c.apellido }}
+        </option>
+      </select>
+
+      <label>Descripción</label>
+      <input type="text" [(ngModel)]="encomienda.descripcion" name="descripcion">
+
+      <label>Peso</label>
+      <input type="number" [(ngModel)]="encomienda.peso" name="peso">
+
+      <label>Volumen</label>
+      <input type="number" [(ngModel)]="encomienda.volumen" name="volumen">
+
+      <label>Valor declarado</label>
+      <input type="number" [(ngModel)]="encomienda.valorDeclarado" name="valorDeclarado">
+
+      <button type="submit">Guardar encomienda</button>
+
+    </form>
+
+    <div class="card table-card">
+
+      <h2>Listado de encomiendas</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Código</th>
+            <th>Descripción</th>
+            <th>Peso</th>
+            <th>Volumen</th>
+            <th>Valor</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let e of encomiendas">
+            <td>{{ e.id }}</td>
+            <td>{{ e.codigo }}</td>
+            <td>{{ e.descripcion }}</td>
+            <td>{{ e.peso }}</td>
+            <td>{{ e.volumen }}</td>
+            <td>{{ e.valorDeclarado }}</td>
+            <td>
+              <button class="delete" (click)="eliminarEncomienda(e.id)">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p *ngIf="encomiendas.length === 0" class="empty">
+        No hay encomiendas registradas.
+      </p>
+
+    </div>
+
+  </div>
+
+</div>

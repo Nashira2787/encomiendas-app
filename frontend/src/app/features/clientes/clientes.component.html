@@ -1,0 +1,119 @@
+<div class="clientes-page">
+  <div class="header">
+    <div>
+      <h1>Clientes</h1>
+      <p>Registro, administración y detalles de clientes</p>
+    </div>
+  </div>
+
+  <div class="grid">
+    <form class="card form-card" (ngSubmit)="guardarCliente()">
+      <h2>Nuevo cliente</h2>
+
+      <label>Nombre</label>
+      <input type="text" [(ngModel)]="cliente.nombre" name="nombre" required>
+
+      <label>Apellido</label>
+      <input type="text" [(ngModel)]="cliente.apellido" name="apellido" required>
+
+      <label>CI</label>
+      <input type="text" [(ngModel)]="cliente.ci" name="ci">
+
+      <label>Teléfono</label>
+      <input type="text" [(ngModel)]="cliente.telefono" name="telefono">
+
+      <label>Email</label>
+      <input type="email" [(ngModel)]="cliente.email" name="email">
+
+      <label>Dirección</label>
+      <input type="text" [(ngModel)]="cliente.direccion" name="direccion">
+
+      <button type="submit">Guardar cliente</button>
+    </form>
+
+    <div class="card table-card">
+      <h2>Listado de clientes</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>CI</th>
+            <th>Teléfono</th>
+            <th>Email</th>
+            <th>Dirección</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let c of clientes">
+            <td>{{ c.id }}</td>
+            <td>{{ c.nombre }}</td>
+            <td>{{ c.apellido }}</td>
+            <td>{{ c.ci }}</td>
+            <td>{{ c.telefono }}</td>
+            <td>{{ c.email }}</td>
+            <td>{{ c.direccion }}</td>
+            <td>
+              <button class="detail" type="button" (click)="verDetalles(c)">
+                Detalles
+              </button>
+
+              <button class="delete" type="button" (click)="eliminarCliente(c.id)">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p *ngIf="clientes.length === 0" class="empty">
+        No hay clientes registrados.
+      </p>
+    </div>
+  </div>
+
+  <div class="card details-card" *ngIf="clienteSeleccionado">
+    <h2>Detalles del cliente</h2>
+
+    <div class="details-grid">
+      <p><strong>ID:</strong> {{ clienteSeleccionado.id }}</p>
+      <p><strong>Nombre:</strong> {{ clienteSeleccionado.nombre }} {{ clienteSeleccionado.apellido }}</p>
+      <p><strong>CI:</strong> {{ clienteSeleccionado.ci }}</p>
+      <p><strong>Teléfono:</strong> {{ clienteSeleccionado.telefono }}</p>
+      <p><strong>Email:</strong> {{ clienteSeleccionado.email }}</p>
+      <p><strong>Dirección:</strong> {{ clienteSeleccionado.direccion }}</p>
+    </div>
+
+    <h3>Encomiendas relacionadas</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Descripción</th>
+          <th>Peso</th>
+          <th>Tipo relación</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let e of encomiendasCliente">
+          <td>{{ e.codigo }}</td>
+          <td>{{ e.descripcion }}</td>
+          <td>{{ e.peso }}</td>
+          <td>
+            {{ e.remitenteId === clienteSeleccionado.id ? 'Remitente' : 'Destinatario' }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p *ngIf="encomiendasCliente.length === 0" class="empty">
+      Este cliente no tiene encomiendas relacionadas.
+    </p>
+  </div>
+</div>

@@ -1,0 +1,154 @@
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.clientes-page {
+  padding: 30px;
+  background: #f4f7fb;
+  min-height: 100vh;
+}
+
+.header {
+  margin-bottom: 25px;
+}
+
+.header h1 {
+  margin: 0;
+  color: #1e293b;
+}
+
+.header p {
+  color: #64748b;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 20px;
+}
+
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.form-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-card label {
+  margin-top: 12px;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #334155;
+}
+
+.form-card input {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+}
+
+.form-card button {
+  margin-top: 20px;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  background: #2563eb;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.form-card button:hover {
+  background: #1d4ed8;
+}
+
+.table-card table,
+.details-card table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.table-card th,
+.details-card th {
+  background: #eff6ff;
+  color: #1e3a8a;
+  padding: 12px;
+}
+
+.table-card td,
+.details-card td {
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.delete {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 7px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.delete:hover {
+  background: #b91c1c;
+}
+
+.detail {
+  background: #0f766e;
+  color: white;
+  border: none;
+  padding: 7px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-right: 6px;
+}
+
+.detail:hover {
+  background: #115e59;
+}
+
+.empty {
+  margin-top: 20px;
+  color: #64748b;
+}
+
+.details-card {
+  margin-top: 25px;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.details-grid p {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 10px;
+  margin: 0;
+}
+
+.details-card h3 {
+  margin-top: 25px;
+  color: #1e293b;
+}
+
+@media(max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+}

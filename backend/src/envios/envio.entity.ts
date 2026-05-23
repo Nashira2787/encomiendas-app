@@ -1,0 +1,3 @@
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+@Entity('envio')
+export class Envio { @PrimaryGeneratedColumn() id:number; @Column({name:'encomienda_id',unique:true}) encomiendaId:number; @Column({name:'sucursal_origen_id',nullable:true}) sucursalOrigenId:number; @Column({name:'sucursal_destino_id',nullable:true}) sucursalDestinoId:number; @Column({name:'fecha_envio',type:'timestamp',nullable:true}) fechaEnvio:Date; @Column({name:'fecha_estimada',type:'timestamp',nullable:true}) fechaEstimada:Date; @Column({type:'decimal',precision:10,scale:2,nullable:true}) costo:number; @Column({name:'estado_id',nullable:true}) estadoId:number; }

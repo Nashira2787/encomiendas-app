@@ -1,0 +1,3 @@
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+@Entity('encomienda')
+export class Encomienda { @PrimaryGeneratedColumn() id:number; @Column({unique:true}) codigo:string; @Column({name:'remitente_id',nullable:true}) remitenteId:number; @Column({name:'destinatario_id',nullable:true}) destinatarioId:number; @Column({type:'text',nullable:true}) descripcion:string; @Column({type:'decimal',precision:10,scale:2,nullable:true}) peso:number; @Column({type:'decimal',precision:10,scale:2,nullable:true}) volumen:number; @Column({name:'valor_declarado',type:'decimal',precision:10,scale:2,nullable:true}) valorDeclarado:number; @CreateDateColumn({name:'fecha_registro'}) fechaRegistro:Date; }

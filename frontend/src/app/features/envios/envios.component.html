@@ -1,0 +1,104 @@
+<div class="clientes-page">
+
+  <div class="header">
+    <div>
+      <h1>Envíos</h1>
+      <p>Gestión de envíos vinculados a encomiendas</p>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <form class="card form-card" (ngSubmit)="guardarEnvio()">
+
+      <h2>Nuevo envío</h2>
+
+      <label>Encomienda</label>
+      <select [(ngModel)]="envio.encomiendaId" name="encomiendaId" required>
+        <option value="">Seleccione encomienda</option>
+        <option *ngFor="let e of encomiendas" [value]="e.id">
+          {{ e.codigo }} - {{ e.descripcion }}
+        </option>
+      </select>
+
+      <label>Sucursal origen</label>
+      <select [(ngModel)]="envio.sucursalOrigenId" name="sucursalOrigenId">
+        <option value="">Seleccione sucursal</option>
+        <option *ngFor="let s of sucursales" [value]="s.id">
+          {{ s.nombre }}
+        </option>
+      </select>
+
+      <label>Sucursal destino</label>
+      <select [(ngModel)]="envio.sucursalDestinoId" name="sucursalDestinoId">
+        <option value="">Seleccione sucursal</option>
+        <option *ngFor="let s of sucursales" [value]="s.id">
+          {{ s.nombre }}
+        </option>
+      </select>
+
+      <label>Fecha de envío</label>
+      <input type="datetime-local" [(ngModel)]="envio.fechaEnvio" name="fechaEnvio">
+
+      <label>Fecha estimada</label>
+      <input type="datetime-local" [(ngModel)]="envio.fechaEstimada" name="fechaEstimada">
+
+      <label>Costo</label>
+      <input type="number" [(ngModel)]="envio.costo" name="costo">
+
+      <label>Estado</label>
+      <select [(ngModel)]="envio.estadoId" name="estadoId">
+        <option [value]="1">Pendiente</option>
+        <option [value]="2">En tránsito</option>
+        <option [value]="3">Entregado</option>
+      </select>
+
+      <button type="submit">
+        Guardar envío
+      </button>
+
+    </form>
+
+    <div class="card table-card">
+
+      <h2>Listado de envíos</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Encomienda</th>
+            <th>Origen</th>
+            <th>Destino</th>
+            <th>Costo</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let e of envios">
+            <td>{{ e.id }}</td>
+            <td>{{ obtenerCodigoEncomienda(e.encomiendaId) }}</td>
+            <td>{{ obtenerNombreSucursal(e.sucursalOrigenId) }}</td>
+            <td>{{ obtenerNombreSucursal(e.sucursalDestinoId) }}</td>
+            <td>{{ e.costo }}</td>
+            <td>{{ obtenerEstado(e.estadoId) }}</td>
+            <td>
+              <button class="delete" (click)="eliminarEnvio(e.id)">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p *ngIf="envios.length === 0" class="empty">
+        No hay envíos registrados.
+      </p>
+
+    </div>
+
+  </div>
+
+</div>
