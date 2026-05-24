@@ -3,7 +3,7 @@
   <div class="header">
     <div>
       <h1>Encomiendas</h1>
-      <p>Registro de encomiendas relacionadas con clientes</p>
+      <p>Registro, administración y búsqueda de encomiendas</p>
     </div>
   </div>
 
@@ -11,7 +11,7 @@
 
     <form class="card form-card" (ngSubmit)="guardarEncomienda()">
 
-      <h2>Nueva encomienda</h2>
+      <h2>{{ editando ? 'Editar encomienda' : 'Nueva encomienda' }}</h2>
 
       <label>Código</label>
       <input type="text" [(ngModel)]="encomienda.codigo" name="codigo" required>
@@ -44,13 +44,39 @@
       <label>Valor declarado</label>
       <input type="number" [(ngModel)]="encomienda.valorDeclarado" name="valorDeclarado">
 
-      <button type="submit">Guardar encomienda</button>
+      <button type="submit">
+        {{ editando ? 'Actualizar encomienda' : 'Guardar encomienda' }}
+      </button>
+
+      <button *ngIf="editando" type="button" class="cancel" (click)="cancelarEdicion()">
+        Cancelar edición
+      </button>
 
     </form>
 
     <div class="card table-card">
 
-      <h2>Listado de encomiendas</h2>
+      <div class="table-header">
+        <h2>Listado de encomiendas</h2>
+
+        <div class="search-box">
+          <input
+            type="text"
+            placeholder="Buscar por código o descripción..."
+            [(ngModel)]="busqueda"
+            name="busqueda"
+            (keyup.enter)="buscar()"
+          >
+
+          <button type="button" (click)="buscar()">
+            Buscar
+          </button>
+        </div>
+      </div>
+
+      <p class="total">
+        Total de encomiendas: {{ total }}
+      </p>
 
       <table>
         <thead>
@@ -74,7 +100,11 @@
             <td>{{ e.volumen }}</td>
             <td>{{ e.valorDeclarado }}</td>
             <td>
-              <button class="delete" (click)="eliminarEncomienda(e.id)">
+              <button class="edit" type="button" (click)="editarEncomienda(e)">
+                Editar
+              </button>
+
+              <button class="delete" type="button" (click)="eliminarEncomienda(e.id)">
                 Eliminar
               </button>
             </td>
@@ -85,6 +115,20 @@
       <p *ngIf="encomiendas.length === 0" class="empty">
         No hay encomiendas registradas.
       </p>
+
+      <div class="pagination">
+        <button type="button" (click)="paginaAnterior()" [disabled]="pagina === 1">
+          Anterior
+        </button>
+
+        <span>
+          Página {{ pagina }} de {{ totalPaginas() }}
+        </span>
+
+        <button type="button" (click)="paginaSiguiente()" [disabled]="pagina >= totalPaginas()">
+          Siguiente
+        </button>
+      </div>
 
     </div>
 

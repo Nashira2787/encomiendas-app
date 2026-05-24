@@ -8,7 +8,7 @@
 
   <div class="grid">
     <form class="card form-card" (ngSubmit)="guardarCliente()">
-      <h2>Nuevo cliente</h2>
+      <h2>{{ editando ? 'Editar cliente' : 'Nuevo cliente' }}</h2>
 
       <label>Nombre</label>
       <input type="text" [(ngModel)]="cliente.nombre" name="nombre" required>
@@ -28,11 +28,32 @@
       <label>Dirección</label>
       <input type="text" [(ngModel)]="cliente.direccion" name="direccion">
 
-      <button type="submit">Guardar cliente</button>
+      <button type="submit">
+        {{ editando ? 'Actualizar cliente' : 'Guardar cliente' }}
+      </button>
+
+      <button *ngIf="editando" type="button" class="cancel" (click)="cancelarEdicion()">
+        Cancelar edición
+      </button>
     </form>
 
     <div class="card table-card">
-      <h2>Listado de clientes</h2>
+      <div class="table-header">
+        <h2>Listado de clientes</h2>
+
+        <div class="search-box">
+          <input
+            type="text"
+            placeholder="Buscar cliente..."
+            [(ngModel)]="busqueda"
+            name="busqueda"
+            (keyup.enter)="buscar()"
+          >
+          <button type="button" (click)="buscar()">Buscar</button>
+        </div>
+      </div>
+
+      <p class="total">Total de clientes: {{ total }}</p>
 
       <table>
         <thead>
@@ -58,13 +79,9 @@
             <td>{{ c.email }}</td>
             <td>{{ c.direccion }}</td>
             <td>
-              <button class="detail" type="button" (click)="verDetalles(c)">
-                Detalles
-              </button>
-
-              <button class="delete" type="button" (click)="eliminarCliente(c.id)">
-                Eliminar
-              </button>
+              <button class="detail" type="button" (click)="verDetalles(c)">Detalles</button>
+              <button class="edit" type="button" (click)="editarCliente(c)">Editar</button>
+              <button class="delete" type="button" (click)="eliminarCliente(c.id)">Eliminar</button>
             </td>
           </tr>
         </tbody>
@@ -73,6 +90,18 @@
       <p *ngIf="clientes.length === 0" class="empty">
         No hay clientes registrados.
       </p>
+
+      <div class="pagination">
+        <button type="button" (click)="paginaAnterior()" [disabled]="pagina === 1">
+          Anterior
+        </button>
+
+        <span>Página {{ pagina }} de {{ totalPaginas() }}</span>
+
+        <button type="button" (click)="paginaSiguiente()" [disabled]="pagina >= totalPaginas()">
+          Siguiente
+        </button>
+      </div>
     </div>
   </div>
 
@@ -105,9 +134,7 @@
           <td>{{ e.codigo }}</td>
           <td>{{ e.descripcion }}</td>
           <td>{{ e.peso }}</td>
-          <td>
-            {{ e.remitenteId === clienteSeleccionado.id ? 'Remitente' : 'Destinatario' }}
-          </td>
+          <td>{{ e.remitenteId === clienteSeleccionado.id ? 'Remitente' : 'Destinatario' }}</td>
         </tr>
       </tbody>
     </table>

@@ -3,7 +3,7 @@
   <div class="header">
     <div>
       <h1>Pagos</h1>
-      <p>Registro de pagos vinculados a envíos</p>
+      <p>Registro, búsqueda y edición de pagos vinculados a envíos</p>
     </div>
   </div>
 
@@ -11,18 +11,30 @@
 
     <form class="card form-card" (ngSubmit)="guardarPago()">
 
-      <h2>Nuevo pago</h2>
+      <h2>{{ editando ? 'Editar pago' : 'Nuevo pago' }}</h2>
 
       <label>Envío</label>
-      <select [(ngModel)]="pago.envioId" name="envioId" required>
+      <select
+        [(ngModel)]="pago.envioId"
+        name="envioId"
+        required
+        (change)="cargarMontoDesdeEnvio()"
+      >
         <option value="">Seleccione envío</option>
+
         <option *ngFor="let e of envios" [value]="e.id">
-          Envío #{{ e.id }}
+          Envío #{{ e.id }} - {{ e.encomienda || '' }} - {{ e.costo }} Bs
         </option>
       </select>
 
       <label>Monto</label>
-      <input type="number" [(ngModel)]="pago.monto" name="monto" required>
+      <input
+        type="number"
+        [(ngModel)]="pago.monto"
+        name="monto"
+        required
+        readonly
+      >
 
       <label>Método de pago</label>
       <select [(ngModel)]="pago.metodo" name="metodo">
@@ -33,14 +45,38 @@
       </select>
 
       <button type="submit">
-        Guardar pago
+        {{ editando ? 'Actualizar pago' : 'Guardar pago' }}
+      </button>
+
+      <button *ngIf="editando" type="button" class="cancel" (click)="cancelarEdicion()">
+        Cancelar edición
       </button>
 
     </form>
 
     <div class="card table-card">
 
-      <h2>Listado de pagos</h2>
+      <div class="table-header">
+        <h2>Listado de pagos</h2>
+
+        <div class="search-box">
+          <input
+            type="text"
+            placeholder="Buscar por envío o método..."
+            [(ngModel)]="busqueda"
+            name="busqueda"
+            (keyup.enter)="buscar()"
+          >
+
+          <button type="button" (click)="buscar()">
+            Buscar
+          </button>
+        </div>
+      </div>
+
+      <p class="total">
+        Total de pagos: {{ total }}
+      </p>
 
       <table>
         <thead>
@@ -57,12 +93,16 @@
         <tbody>
           <tr *ngFor="let p of pagos">
             <td>{{ p.id }}</td>
-            <td>#{{ p.envioId }}</td>
+            <td>{{ buscarEnvioTexto(p.envioId) }}</td>
             <td>{{ p.monto }}</td>
             <td>{{ p.metodo }}</td>
             <td>{{ p.fecha }}</td>
             <td>
-              <button class="delete" (click)="eliminarPago(p.id)">
+              <button class="edit" type="button" (click)="editarPago(p)">
+                Editar
+              </button>
+
+              <button class="delete" type="button" (click)="eliminarPago(p.id)">
                 Eliminar
               </button>
             </td>
@@ -73,6 +113,20 @@
       <p *ngIf="pagos.length === 0" class="empty">
         No hay pagos registrados.
       </p>
+
+      <div class="pagination">
+        <button type="button" (click)="paginaAnterior()" [disabled]="pagina === 1">
+          Anterior
+        </button>
+
+        <span>
+          Página {{ pagina }} de {{ totalPaginas() }}
+        </span>
+
+        <button type="button" (click)="paginaSiguiente()" [disabled]="pagina >= totalPaginas()">
+          Siguiente
+        </button>
+      </div>
 
     </div>
 

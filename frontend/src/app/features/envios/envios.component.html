@@ -3,7 +3,7 @@
   <div class="header">
     <div>
       <h1>Envíos</h1>
-      <p>Gestión de envíos vinculados a encomiendas</p>
+      <p>Gestión, búsqueda y edición de envíos vinculados a encomiendas</p>
     </div>
   </div>
 
@@ -11,7 +11,7 @@
 
     <form class="card form-card" (ngSubmit)="guardarEnvio()">
 
-      <h2>Nuevo envío</h2>
+      <h2>{{ editando ? 'Editar envío' : 'Nuevo envío' }}</h2>
 
       <label>Encomienda</label>
       <select [(ngModel)]="envio.encomiendaId" name="encomiendaId" required>
@@ -54,14 +54,38 @@
       </select>
 
       <button type="submit">
-        Guardar envío
+        {{ editando ? 'Actualizar envío' : 'Guardar envío' }}
+      </button>
+
+      <button *ngIf="editando" type="button" class="cancel" (click)="cancelarEdicion()">
+        Cancelar edición
       </button>
 
     </form>
 
     <div class="card table-card">
 
-      <h2>Listado de envíos</h2>
+      <div class="table-header">
+        <h2>Listado de envíos</h2>
+
+        <div class="search-box">
+          <input
+            type="text"
+            placeholder="Buscar por encomienda, origen, destino o estado..."
+            [(ngModel)]="busqueda"
+            name="busqueda"
+            (keyup.enter)="buscar()"
+          >
+
+          <button type="button" (click)="buscar()">
+            Buscar
+          </button>
+        </div>
+      </div>
+
+      <p class="total">
+        Total de envíos: {{ total }}
+      </p>
 
       <table>
         <thead>
@@ -79,13 +103,17 @@
         <tbody>
           <tr *ngFor="let e of envios">
             <td>{{ e.id }}</td>
-            <td>{{ obtenerCodigoEncomienda(e.encomiendaId) }}</td>
-            <td>{{ obtenerNombreSucursal(e.sucursalOrigenId) }}</td>
-            <td>{{ obtenerNombreSucursal(e.sucursalDestinoId) }}</td>
+            <td>{{ e.encomienda || obtenerCodigoEncomienda(e.encomiendaId) }}</td>
+            <td>{{ e.origen || obtenerNombreSucursal(e.sucursalOrigenId) }}</td>
+            <td>{{ e.destino || obtenerNombreSucursal(e.sucursalDestinoId) }}</td>
             <td>{{ e.costo }}</td>
-            <td>{{ obtenerEstado(e.estadoId) }}</td>
+            <td>{{ e.estado || obtenerEstado(e.estadoId) }}</td>
             <td>
-              <button class="delete" (click)="eliminarEnvio(e.id)">
+              <button class="edit" type="button" (click)="editarEnvio(e)">
+                Editar
+              </button>
+
+              <button class="delete" type="button" (click)="eliminarEnvio(e.id)">
                 Eliminar
               </button>
             </td>
@@ -96,6 +124,20 @@
       <p *ngIf="envios.length === 0" class="empty">
         No hay envíos registrados.
       </p>
+
+      <div class="pagination">
+        <button type="button" (click)="paginaAnterior()" [disabled]="pagina === 1">
+          Anterior
+        </button>
+
+        <span>
+          Página {{ pagina }} de {{ totalPaginas() }}
+        </span>
+
+        <button type="button" (click)="paginaSiguiente()" [disabled]="pagina >= totalPaginas()">
+          Siguiente
+        </button>
+      </div>
 
     </div>
 

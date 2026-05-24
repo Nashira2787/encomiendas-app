@@ -14,6 +14,14 @@ export class SeguimientosComponent implements OnInit {
   seguimientos: any[] = [];
   envios: any[] = [];
 
+  busqueda = '';
+  pagina = 1;
+  limite = 10;
+  total = 0;
+
+  editando = false;
+  seguimientoIdEditando: number | null = null;
+
   seguimiento = {
     envioId: '',
     estadoId: 1,
@@ -30,17 +38,31 @@ export class SeguimientosComponent implements OnInit {
   cargarDatos() {
     this.obtenerSeguimientos();
 
-    this.api.get('envios?q=').subscribe({
+    this.api.get('envios?q=ENC&page=1&limit=1000').subscribe({
       next: (res: any) => this.envios = res.data || [],
       error: err => console.error('Error al listar envíos:', err)
     });
   }
 
   obtenerSeguimientos() {
-    this.api.get('seguimientos?q=').subscribe({
-      next: (res: any) => this.seguimientos = res.data || [],
+    const filtro = this.busqueda.trim();
+
+    const endpoint = filtro
+      ? `seguimientos?q=${encodeURIComponent(filtro)}&page=${this.pagina}&limit=${this.limite}`
+      : `seguimientos?q=En&page=${this.pagina}&limit=${this.limite}`;
+
+    this.api.get(endpoint).subscribe({
+      next: (res: any) => {
+        this.seguimientos = res.data || [];
+        this.total = res.total || 0;
+      },
       error: err => console.error('Error al listar seguimientos:', err)
     });
+  }
+
+  buscar() {
+    this.pagina = 1;
+    this.obtenerSeguimientos();
   }
 
   guardarSeguimiento() {
@@ -51,17 +73,26 @@ export class SeguimientosComponent implements OnInit {
       observaciones: this.seguimiento.observaciones
     };
 
+    if (this.editando && this.seguimientoIdEditando) {
+      this.api.patch('seguimientos', this.seguimientoIdEditando, data).subscribe({
+        next: () => {
+          alert('Seguimiento actualizado correctamente');
+          this.limpiarFormulario();
+          this.cargarDatos();
+        },
+        error: err => {
+          console.error('Error al actualizar seguimiento:', err);
+          alert('Error al actualizar seguimiento');
+        }
+      });
+
+      return;
+    }
+
     this.api.post('seguimientos', data).subscribe({
       next: () => {
         alert('Seguimiento guardado correctamente');
-
-        this.seguimiento = {
-          envioId: '',
-          estadoId: 1,
-          ubicacion: '',
-          observaciones: ''
-        };
-
+        this.limpiarFormulario();
         this.cargarDatos();
       },
       error: err => {
@@ -71,7 +102,41 @@ export class SeguimientosComponent implements OnInit {
     });
   }
 
+  editarSeguimiento(s: any) {
+    this.editando = true;
+    this.seguimientoIdEditando = s.id;
+
+    this.seguimiento = {
+      envioId: s.envioId ? String(s.envioId) : '',
+      estadoId: Number(s.estadoId) || 1,
+      ubicacion: s.ubicacion || '',
+      observaciones: s.observaciones || ''
+    };
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  cancelarEdicion() {
+    this.limpiarFormulario();
+  }
+
+  limpiarFormulario() {
+    this.editando = false;
+    this.seguimientoIdEditando = null;
+
+    this.seguimiento = {
+      envioId: '',
+      estadoId: 1,
+      ubicacion: '',
+      observaciones: ''
+    };
+  }
+
   eliminarSeguimiento(id: number) {
+    const confirmar = confirm('¿Seguro que deseas eliminar este seguimiento?');
+
+    if (!confirmar) return;
+
     this.api.delete('seguimientos', id).subscribe({
       next: () => this.obtenerSeguimientos(),
       error: err => console.error('Error al eliminar seguimiento:', err)
@@ -83,5 +148,23 @@ export class SeguimientosComponent implements OnInit {
     if (Number(id) === 2) return 'En tránsito';
     if (Number(id) === 3) return 'Entregado';
     return 'Sin estado';
+  }
+
+  paginaAnterior() {
+    if (this.pagina > 1) {
+      this.pagina--;
+      this.obtenerSeguimientos();
+    }
+  }
+
+  paginaSiguiente() {
+    if (this.pagina < this.totalPaginas()) {
+      this.pagina++;
+      this.obtenerSeguimientos();
+    }
+  }
+
+  totalPaginas() {
+    return Math.ceil(this.total / this.limite) || 1;
   }
 }

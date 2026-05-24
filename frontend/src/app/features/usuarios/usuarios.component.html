@@ -3,7 +3,7 @@
   <div class="header">
     <div>
       <h1>Usuarios</h1>
-      <p>Administración de usuarios del sistema</p>
+      <p>Administración, búsqueda y edición de usuarios del sistema</p>
     </div>
   </div>
 
@@ -11,13 +11,19 @@
 
     <form class="card form-card" (ngSubmit)="guardarUsuario()">
 
-      <h2>Nuevo usuario</h2>
+      <h2>{{ editando ? 'Editar usuario' : 'Nuevo usuario' }}</h2>
 
       <label>Nombre de usuario</label>
       <input type="text" [(ngModel)]="usuario.nombreUsuario" name="nombreUsuario" required>
 
       <label>Contraseña</label>
-      <input type="password" [(ngModel)]="usuario.password" name="password" required>
+      <input
+        type="password"
+        [(ngModel)]="usuario.password"
+        name="password"
+        [required]="!editando"
+        [placeholder]="editando ? 'Dejar vacío para no cambiar' : ''"
+      >
 
       <label>Rol</label>
       <select [(ngModel)]="usuario.rol" name="rol">
@@ -33,14 +39,38 @@
       </select>
 
       <button type="submit">
-        Guardar usuario
+        {{ editando ? 'Actualizar usuario' : 'Guardar usuario' }}
+      </button>
+
+      <button *ngIf="editando" type="button" class="cancel" (click)="cancelarEdicion()">
+        Cancelar edición
       </button>
 
     </form>
 
     <div class="card table-card">
 
-      <h2>Listado de usuarios</h2>
+      <div class="table-header">
+        <h2>Listado de usuarios</h2>
+
+        <div class="search-box">
+          <input
+            type="text"
+            placeholder="Buscar por usuario, rol o estado..."
+            [(ngModel)]="busqueda"
+            name="busqueda"
+            (keyup.enter)="buscar()"
+          >
+
+          <button type="button" (click)="buscar()">
+            Buscar
+          </button>
+        </div>
+      </div>
+
+      <p class="total">
+        Total de usuarios: {{ total }}
+      </p>
 
       <table>
         <thead>
@@ -60,7 +90,11 @@
             <td>{{ u.rol }}</td>
             <td>{{ u.estado ? 'Activo' : 'Inactivo' }}</td>
             <td>
-              <button class="delete" (click)="eliminarUsuario(u.id)">
+              <button class="edit" type="button" (click)="editarUsuario(u)">
+                Editar
+              </button>
+
+              <button class="delete" type="button" (click)="eliminarUsuario(u.id)">
                 Eliminar
               </button>
             </td>
@@ -71,6 +105,20 @@
       <p *ngIf="usuarios.length === 0" class="empty">
         No hay usuarios registrados.
       </p>
+
+      <div class="pagination">
+        <button type="button" (click)="paginaAnterior()" [disabled]="pagina === 1">
+          Anterior
+        </button>
+
+        <span>
+          Página {{ pagina }} de {{ totalPaginas() }}
+        </span>
+
+        <button type="button" (click)="paginaSiguiente()" [disabled]="pagina >= totalPaginas()">
+          Siguiente
+        </button>
+      </div>
 
     </div>
 

@@ -3,7 +3,7 @@
   <div class="header">
     <div>
       <h1>Facturas</h1>
-      <p>Registro de facturación vinculada a pagos</p>
+      <p>Registro, búsqueda y edición de facturación vinculada a pagos</p>
     </div>
   </div>
 
@@ -11,7 +11,7 @@
 
     <form class="card form-card" (ngSubmit)="guardarFactura()">
 
-      <h2>Nueva factura</h2>
+      <h2>{{ editando ? 'Editar factura' : 'Nueva factura' }}</h2>
 
       <label>Pago</label>
       <select [(ngModel)]="factura.pagoId" name="pagoId" required>
@@ -31,14 +31,38 @@
       <input type="text" [(ngModel)]="factura.razonSocial" name="razonSocial">
 
       <button type="submit">
-        Guardar factura
+        {{ editando ? 'Actualizar factura' : 'Guardar factura' }}
+      </button>
+
+      <button *ngIf="editando" type="button" class="cancel" (click)="cancelarEdicion()">
+        Cancelar edición
       </button>
 
     </form>
 
     <div class="card table-card">
 
-      <h2>Listado de facturas</h2>
+      <div class="table-header">
+        <h2>Listado de facturas</h2>
+
+        <div class="search-box">
+          <input
+            type="text"
+            placeholder="Buscar por NIT o razón social..."
+            [(ngModel)]="busqueda"
+            name="busqueda"
+            (keyup.enter)="buscar()"
+          >
+
+          <button type="button" (click)="buscar()">
+            Buscar
+          </button>
+        </div>
+      </div>
+
+      <p class="total">
+        Total de facturas: {{ total }}
+      </p>
 
       <table>
         <thead>
@@ -56,13 +80,17 @@
         <tbody>
           <tr *ngFor="let f of facturas">
             <td>{{ f.id }}</td>
-            <td>#{{ f.pagoId }}</td>
+            <td>{{ buscarPagoTexto(f.pagoId) }}</td>
             <td>{{ f.numeroFactura }}</td>
             <td>{{ f.nit }}</td>
             <td>{{ f.razonSocial }}</td>
             <td>{{ f.fecha }}</td>
             <td>
-              <button class="delete" (click)="eliminarFactura(f.id)">
+              <button class="edit" type="button" (click)="editarFactura(f)">
+                Editar
+              </button>
+
+              <button class="delete" type="button" (click)="eliminarFactura(f.id)">
                 Eliminar
               </button>
             </td>
@@ -73,6 +101,20 @@
       <p *ngIf="facturas.length === 0" class="empty">
         No hay facturas registradas.
       </p>
+
+      <div class="pagination">
+        <button type="button" (click)="paginaAnterior()" [disabled]="pagina === 1">
+          Anterior
+        </button>
+
+        <span>
+          Página {{ pagina }} de {{ totalPaginas() }}
+        </span>
+
+        <button type="button" (click)="paginaSiguiente()" [disabled]="pagina >= totalPaginas()">
+          Siguiente
+        </button>
+      </div>
 
     </div>
 

@@ -15,6 +15,14 @@ export class EnviosComponent implements OnInit {
   encomiendas: any[] = [];
   sucursales: any[] = [];
 
+  busqueda = '';
+  pagina = 1;
+  limite = 10;
+  total = 0;
+
+  editando = false;
+  envioIdEditando: number | null = null;
+
   envio = {
     encomiendaId: '',
     sucursalOrigenId: '',
@@ -34,22 +42,36 @@ export class EnviosComponent implements OnInit {
   cargarDatos() {
     this.obtenerEnvios();
 
-    this.api.get('encomiendas?q=').subscribe({
+    this.api.get('encomiendas?q=ENC&page=1&limit=1000').subscribe({
       next: (res: any) => this.encomiendas = res.data || [],
       error: err => console.error('Error al listar encomiendas:', err)
     });
 
-    this.api.get('sucursales?q=').subscribe({
+    this.api.get('sucursales?q=a&page=1&limit=1000').subscribe({
       next: (res: any) => this.sucursales = res.data || [],
       error: err => console.error('Error al listar sucursales:', err)
     });
   }
 
   obtenerEnvios() {
-    this.api.get('envios?q=').subscribe({
-      next: (res: any) => this.envios = res.data || [],
+    const filtro = this.busqueda.trim();
+
+    const endpoint = filtro
+      ? `envios?q=${encodeURIComponent(filtro)}&page=${this.pagina}&limit=${this.limite}`
+      : `envios?q=ENC&page=${this.pagina}&limit=${this.limite}`;
+
+    this.api.get(endpoint).subscribe({
+      next: (res: any) => {
+        this.envios = res.data || [];
+        this.total = res.total || 0;
+      },
       error: err => console.error('Error al listar envíos:', err)
     });
+  }
+
+  buscar() {
+    this.pagina = 1;
+    this.obtenerEnvios();
   }
 
   guardarEnvio() {
@@ -63,20 +85,26 @@ export class EnviosComponent implements OnInit {
       estadoId: Number(this.envio.estadoId)
     };
 
+    if (this.editando && this.envioIdEditando) {
+      this.api.patch('envios', this.envioIdEditando, data).subscribe({
+        next: () => {
+          alert('Envío actualizado correctamente');
+          this.limpiarFormulario();
+          this.cargarDatos();
+        },
+        error: err => {
+          console.error('Error al actualizar envío:', err);
+          alert('Error al actualizar envío');
+        }
+      });
+
+      return;
+    }
+
     this.api.post('envios', data).subscribe({
       next: () => {
         alert('Envío guardado correctamente');
-
-        this.envio = {
-          encomiendaId: '',
-          sucursalOrigenId: '',
-          sucursalDestinoId: '',
-          fechaEnvio: '',
-          fechaEstimada: '',
-          costo: 0,
-          estadoId: 1
-        };
-
+        this.limpiarFormulario();
         this.cargarDatos();
       },
       error: err => {
@@ -86,7 +114,47 @@ export class EnviosComponent implements OnInit {
     });
   }
 
+  editarEnvio(e: any) {
+    this.editando = true;
+    this.envioIdEditando = e.id;
+
+    this.envio = {
+      encomiendaId: e.encomiendaId ? String(e.encomiendaId) : '',
+      sucursalOrigenId: e.sucursalOrigenId ? String(e.sucursalOrigenId) : '',
+      sucursalDestinoId: e.sucursalDestinoId ? String(e.sucursalDestinoId) : '',
+      fechaEnvio: this.formatearFechaInput(e.fechaEnvio),
+      fechaEstimada: this.formatearFechaInput(e.fechaEstimada),
+      costo: Number(e.costo) || 0,
+      estadoId: Number(e.estadoId) || 1
+    };
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  cancelarEdicion() {
+    this.limpiarFormulario();
+  }
+
+  limpiarFormulario() {
+    this.editando = false;
+    this.envioIdEditando = null;
+
+    this.envio = {
+      encomiendaId: '',
+      sucursalOrigenId: '',
+      sucursalDestinoId: '',
+      fechaEnvio: '',
+      fechaEstimada: '',
+      costo: 0,
+      estadoId: 1
+    };
+  }
+
   eliminarEnvio(id: number) {
+    const confirmar = confirm('¿Seguro que deseas eliminar este envío?');
+
+    if (!confirmar) return;
+
     this.api.delete('envios', id).subscribe({
       next: () => this.obtenerEnvios(),
       error: err => console.error('Error al eliminar envío:', err)
@@ -108,5 +176,29 @@ export class EnviosComponent implements OnInit {
     if (Number(id) === 2) return 'En tránsito';
     if (Number(id) === 3) return 'Entregado';
     return 'Sin estado';
+  }
+
+  formatearFechaInput(fecha: any): string {
+    if (!fecha) return '';
+    const d = new Date(fecha);
+    return d.toISOString().slice(0, 16);
+  }
+
+  paginaAnterior() {
+    if (this.pagina > 1) {
+      this.pagina--;
+      this.obtenerEnvios();
+    }
+  }
+
+  paginaSiguiente() {
+    if (this.pagina < this.totalPaginas()) {
+      this.pagina++;
+      this.obtenerEnvios();
+    }
+  }
+
+  totalPaginas() {
+    return Math.ceil(this.total / this.limite) || 1;
   }
 }

@@ -47,7 +47,8 @@ body {
   color: #334155;
 }
 
-.form-card input {
+.form-card input,
+.search-box input {
   padding: 10px;
   border-radius: 10px;
   border: 1px solid #cbd5e1;
@@ -66,6 +67,46 @@ body {
 
 .form-card button:hover {
   background: #1d4ed8;
+}
+
+.cancel {
+  background: #64748b !important;
+}
+
+.cancel:hover {
+  background: #475569 !important;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  display: flex;
+  gap: 8px;
+}
+
+.search-box button {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 10px;
+  background: #2563eb;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.search-box button:hover {
+  background: #1d4ed8;
+}
+
+.total {
+  color: #475569;
+  font-weight: bold;
 }
 
 .table-card table,
@@ -115,9 +156,46 @@ body {
   background: #115e59;
 }
 
+.edit {
+  background: #f59e0b;
+  color: white;
+  border: none;
+  padding: 7px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-right: 6px;
+}
+
+.edit:hover {
+  background: #d97706;
+}
+
 .empty {
   margin-top: 20px;
   color: #64748b;
+}
+
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  align-items: center;
+}
+
+.pagination button {
+  border: none;
+  border-radius: 10px;
+  background: #2563eb;
+  color: white;
+  padding: 10px 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
 }
 
 .details-card {
@@ -150,5 +228,17 @@ body {
 
   .details-grid {
     grid-template-columns: 1fr;
+  }
+
+  .table-header {
+    align-items: stretch;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
+  .search-box input {
+    flex: 1;
   }
 }

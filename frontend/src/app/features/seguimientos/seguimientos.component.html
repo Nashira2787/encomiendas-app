@@ -3,7 +3,7 @@
   <div class="header">
     <div>
       <h1>Seguimientos</h1>
-      <p>Tracking y estados de los envíos</p>
+      <p>Tracking, búsqueda y edición de estados de los envíos</p>
     </div>
   </div>
 
@@ -11,13 +11,13 @@
 
     <form class="card form-card" (ngSubmit)="guardarSeguimiento()">
 
-      <h2>Nuevo seguimiento</h2>
+      <h2>{{ editando ? 'Editar seguimiento' : 'Nuevo seguimiento' }}</h2>
 
       <label>Envío</label>
       <select [(ngModel)]="seguimiento.envioId" name="envioId" required>
         <option value="">Seleccione envío</option>
         <option *ngFor="let e of envios" [value]="e.id">
-          Envío #{{ e.id }}
+          Envío #{{ e.id }} - {{ e.encomienda || '' }}
         </option>
       </select>
 
@@ -43,14 +43,38 @@
       >
 
       <button type="submit">
-        Guardar seguimiento
+        {{ editando ? 'Actualizar seguimiento' : 'Guardar seguimiento' }}
+      </button>
+
+      <button *ngIf="editando" type="button" class="cancel" (click)="cancelarEdicion()">
+        Cancelar edición
       </button>
 
     </form>
 
     <div class="card table-card">
 
-      <h2>Listado de seguimientos</h2>
+      <div class="table-header">
+        <h2>Listado de seguimientos</h2>
+
+        <div class="search-box">
+          <input
+            type="text"
+            placeholder="Buscar por envío, estado, ubicación, observación o fecha..."
+            [(ngModel)]="busqueda"
+            name="busqueda"
+            (keyup.enter)="buscar()"
+          >
+
+          <button type="button" (click)="buscar()">
+            Buscar
+          </button>
+        </div>
+      </div>
+
+      <p class="total">
+        Total de seguimientos: {{ total }}
+      </p>
 
       <table>
         <thead>
@@ -68,13 +92,17 @@
         <tbody>
           <tr *ngFor="let s of seguimientos">
             <td>{{ s.id }}</td>
-            <td>#{{ s.envioId }}</td>
-            <td>{{ obtenerEstado(s.estadoId) }}</td>
+            <td>{{ s.envio || ('#' + s.envioId) }}</td>
+            <td>{{ s.estado || obtenerEstado(s.estadoId) }}</td>
             <td>{{ s.ubicacion }}</td>
             <td>{{ s.observaciones }}</td>
             <td>{{ s.fecha }}</td>
             <td>
-              <button class="delete" (click)="eliminarSeguimiento(s.id)">
+              <button class="edit" type="button" (click)="editarSeguimiento(s)">
+                Editar
+              </button>
+
+              <button class="delete" type="button" (click)="eliminarSeguimiento(s.id)">
                 Eliminar
               </button>
             </td>
@@ -85,6 +113,20 @@
       <p *ngIf="seguimientos.length === 0" class="empty">
         No hay seguimientos registrados.
       </p>
+
+      <div class="pagination">
+        <button type="button" (click)="paginaAnterior()" [disabled]="pagina === 1">
+          Anterior
+        </button>
+
+        <span>
+          Página {{ pagina }} de {{ totalPaginas() }}
+        </span>
+
+        <button type="button" (click)="paginaSiguiente()" [disabled]="pagina >= totalPaginas()">
+          Siguiente
+        </button>
+      </div>
 
     </div>
 
